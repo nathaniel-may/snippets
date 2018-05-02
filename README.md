@@ -1,2 +1,2 @@
 # snippets
-All code is written and tested by me. Use at your own risk.
+This repository is for sharing code excerpts with limited value. Use at your own risk.
