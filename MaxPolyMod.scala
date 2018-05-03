@@ -11,6 +11,8 @@ object MaxPolyMod {
     println(getMax(List(List(), i1), 5))
     println("all empty lists produce 0")
     println(getMax(List(List(), List()), 5))
+    println("this empty full empty set should produce 4")
+    println(getMax(List(List(), i1, List()), 5))
     println("answer should be 3")
     println(getMax(List(i1, i2), 5))
     println("lists can be different lengths. answer should be 10")
@@ -35,16 +37,15 @@ object MaxPolyMod {
 
   /** Computes the cartesian product for all lists in lists
     *
-    * @param lists input lists to compute the product of
+    * @param lists input lists of varying length to compute the product
     * @tparam X enforces all lists to contain the same type
-    *           this is currently an unnecessary restriction
     * @return The product. Each element in the product is a List[X]
     */
   def cross[X](lists: List[List[X]]): List[List[X]] = {
-    lists.foldLeft(List[List[X]]())((res, list) =>
-      if (res.isEmpty) list.map(l => List(l))
-      else res.flatMap(r => list.map(l => l+:r))
-    )
+    lists.foldLeft(List[List[X]]())((prod, list) =>
+      if (prod.isEmpty) list.map(l => List(l))
+      else if (list.isEmpty) prod
+      else prod.flatMap(r => list.map(l => l+:r)))
   }
-  
+
 }
