@@ -9,7 +9,7 @@ object Cards {
   case object Hearts extends Suit
 
   val suits = List(Spades, Diamonds, Clubs, Hearts)
-  val values = CardValue.values.toSeq.sorted
+  val values: Seq[CardValue.Value] = CardValue.values.toSeq.sorted
 
   // Example of adding attributes to an enumeration by extending the Enumeration.Val class
   object CardValue extends Enumeration {
@@ -33,20 +33,22 @@ object Cards {
 
   case class Card(suit: Suit, value: CardValue.Value)
 
-  val deck = (for { s <- List(Spades, Diamonds); v <- values.reverse } yield Card(s, v)) ++
+  val deck: List[Card] = (for { s <- List(Spades, Diamonds); v <- values.reverse } yield Card(s, v)) ++
              (for { s <- List(Clubs, Hearts);    v <- values }         yield Card(s, v))
 
-  def shuffledDeck = {
+  def shuffledDeck: List[Card] = {
     def rand(low: Int, high: Int) = (scala.math.random() * (high - low) + low).toInt
-    def fisherYates(cards: Array[Card], index: Int=0): List[Card] = {
-      if(index == cards.length) cards.toList
-      else {
-        val r = rand(index, cards.length)
-        val choice = cards.lift(r).get
-        fisherYates(cards.updated(r, cards.lift(index).get).updated(index, choice), index + 1)
+    def fisherYates(cards: List[Card]): List[Card] = {
+      val mutableCards = cards.toArray
+      for(i <- cards.indices){
+        val r = rand(i, cards.length)
+        val choice = mutableCards(r)
+        mutableCards.update(r, cards(i))
+        mutableCards.update(i, choice)
       }
+      mutableCards.toList
     }
-    fisherYates(deck.toArray)
+    fisherYates(deck)
   }
 
   def main(args: Array[String]) {
