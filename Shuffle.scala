@@ -13,8 +13,7 @@ object Shuffle {
       for {
         v1 <- m.get(k1)
         v2 <- m.get(k2)
-        swapped <- Some(m.updated(k1, v2).updated(k2, v1))
-      } yield swapped
+      } yield m.updated(k1, v2).updated(k2, v1)
   }
 
   implicit class listWithShuffle[A](l: List[A]){
@@ -22,14 +21,12 @@ object Shuffle {
       //TODO use pure generator
       def rand(low: Int, high: Int) = scala.util.Random.nextInt(high - low) + low
 
-      val map = l.toStream
-        .zipWithIndex
-        .map{ case (a, i) => i -> a }
-        .toMap
+      val map = l.zipWithIndex.map{_.swap}.toMap
 
       (0 until map.size)
-        .foldLeft(map){
-          case (m, i) => m.swap(i, rand(i, m.size)).get }
+        .foldLeft(map){ (m, i) =>
+          m.swap(i, rand(i, m.size))
+          .getOrElse(throw new Exception("shuffle implementation error")) }
         .valuesIterator.toList
     }
   }
